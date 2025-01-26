@@ -1,5 +1,5 @@
 # Calcado de Micrograd (https://github.com/karpathy/micrograd/blob/master/micrograd/engine.py)
-
+import math
 class Value:
     """ stores a single scalar value and its gradient """
 
@@ -53,6 +53,17 @@ class Value:
 
         return out
 
+    def exp(self):
+        x = self.data
+        out = Value(math.exp(x), (self, ), f'e^{self.data}')
+
+        def _backward():
+          self.grad += out.data * out.grad # NOTE: in the video I incorrectly used = instead of +=. Fixed here.
+        out._backward = _backward
+
+        return out
+
+
     def backward(self):
 
         # topological order all of the children in the graph
@@ -94,4 +105,3 @@ class Value:
 
     def __repr__(self):
         return f"Value(data={self.data}, grad={self.grad}, name={self.name})"
-     
